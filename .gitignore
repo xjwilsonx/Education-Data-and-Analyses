@@ -1,0 +1,8 @@
+# --- R Project Housekeeping ---
+.Rhistory        # Keeps your command history private
+.RData           # Prevents saving/loading large workspace images
+.Ruserdata       # User-specific R settings
+.Rproj.user/     # Internal RStudio project settings
+
+# --- System Files ---
+.DS_Store        # macOS specific folder metadata
