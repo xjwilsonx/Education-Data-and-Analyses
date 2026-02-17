@@ -3,6 +3,8 @@
 This repository explores the Urban Institute’s `educationdata` package in R to visualize student enrollment distribution across the United States.
 
 **[📊 Link to Interactive Tableau Dashboard] (https://public.tableau.com/app/profile/jonathan.wilson7172/viz/EnrollmentShareoftheLargestPublicSchoolDistrictbyState/Percentage)**
+![Statewide School Centralization Dashboard](Enrollment_Share_State_LEA.png)
+
 
 ## Project Goal
 The goal is to measure "Enrollment Concentration"—identifying what percentage of a state's total public school students attend the single largest federal reporting unit.
