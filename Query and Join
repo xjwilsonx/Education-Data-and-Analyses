@@ -1,0 +1,79 @@
+library(educationdata)
+library(tidyverse)
+
+# This csv is found in repo
+file_path <- "data_fips.csv"
+
+if (file.exists(file_path)) {
+  # 1. If the file exists, read it
+  message("Loading data from local CSV...")
+  join <- read.csv(file_path)
+  
+} else {
+  # 2. If it doesn't exist, run your API commands
+  message("CSV not found. Fetching data from API...")
+  
+  # Get all public schools for recent year
+  district_geo <- get_education_data(
+    level = "school-districts",
+    source = "ccd",
+    topic = "directory",
+    filters = list(year = 2023)
+  )
+  
+  # Get district-level data
+  districts_2023 <- get_education_data(
+    level = "school-districts",
+    source = "ccd", 
+    topic = "enrollment",
+    filters = list(year = 2023)
+  )
+
+# Enrollment summary
+  districts_summary <- districts_2023 %>%
+    filter(grade == 99) %>%
+    group_by(leaid, year, fips) %>%
+    summarize(
+      total_enrollment = sum(enrollment, na.rm = TRUE),
+      .groups = 'drop'
+    ) %>%
+    filter(total_enrollment > 0)
+  
+  join <- districts_summary %>%
+    left_join(
+      district_geo %>% 
+        select(leaid, lea_name, phone, city_location, state_leaid, 
+               state_location, zip_location, county_name, county_code,
+               latitude, longitude, urban_centric_locale, 
+               locale_txt = urban_centric_locale),
+      by = "leaid"
+    ) %>%
+    mutate(
+      size_category = case_when(
+        total_enrollment < 1000 ~ "Small (<1K)",
+        total_enrollment < 5000 ~ "Medium (1K-5K)",
+        total_enrollment < 25000 ~ "Large (5K-25K)",
+        TRUE ~ "Very Large (25K+)"
+      ),
+      size_category = factor(size_category, 
+                             levels = c("Small (<1K)", "Medium (1K-5K)", 
+                                        "Large (5K-25K)", "Very Large (25K+)"))
+    )
+  
+  # Save it so it exists for the next run
+  write.csv(join,
+file_path,
+row.names = FALSE)
+}
+
+# 🌆 NY Explore ####
+# A FAQ concerns the split of NYC school district by federal definition
+ny_stats <- join %>%
+  filter(state_location == "NY") %>%
+  summarize(
+    total_state = sum(total_enrollment, na.rm = TRUE),
+    total_nyc = sum(total_enrollment[str_detect(lea_name,
+                                                "New York City Geographic District")],
+                    na.rm = TRUE),
+    percent_nyc = (total_nyc / total_state) * 100
+  )
