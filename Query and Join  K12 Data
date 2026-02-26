@@ -67,7 +67,8 @@ row.names = FALSE)
 }
 
 # 🌆 NY Explore ####
-# A FAQ concerns the split of NYC school district by federal definition
+# A FAQ concerns the split of NYC school district by federal definition of 
+# local education agency
 ny_stats <- join %>%
   filter(state_location == "NY") %>%
   summarize(
