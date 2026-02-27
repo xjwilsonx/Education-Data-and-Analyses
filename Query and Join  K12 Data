@@ -73,8 +73,10 @@ ny_stats <- join %>%
   filter(state_location == "NY") %>%
   summarize(
     total_state = sum(total_enrollment, na.rm = TRUE),
-    total_nyc = sum(total_enrollment[str_detect(lea_name,
-                                                "New York City Geographic District")],
-                    na.rm = TRUE),
+    total_nyc = sum(
+      total_enrollment[str_detect(lea_name, regex("New York City Geographic",
+                                                  ignore_case = TRUE))], 
+      na.rm = TRUE
+    ),
     percent_nyc = (total_nyc / total_state) * 100
   )
