@@ -68,7 +68,8 @@ row.names = FALSE)
 
 # 🌆 NY Explore ####
 # A FAQ concerns the split of NYC school district by federal definition of 
-# local education agency
+# local education agency. If it was not split into 32+ administrative units,
+# it would total approximately 847,000 students and account for 33.44% of NY state's students.
 ny_stats <- join %>%
   filter(state_location == "NY") %>%
   summarize(
